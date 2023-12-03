@@ -1,7 +1,7 @@
 nams=['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', '1' , '2', '3' ,'4', '5', '6', '7' ,'8' ,'9' ]
 vals=[ 1 , 2, 3 ,4, 5, 6, 7 ,8 ,9, 1 , 2, 3 ,4 , 5, 6, 7 ,8 , 9]
 
-with open('1/1_1_data.dat') as f:
+with open('data/1_data.dat') as f:
     sumit=0
     for line in f:
         idx=[]
@@ -15,9 +15,6 @@ with open('1/1_1_data.dat') as f:
             if line.rfind(nams[kk])>-1:
                 idx2.append(line.rfind(nams[kk]))
                 val2.append(vals[kk])
-        
-        #print(val[idx.index(min(idx))])
-        #print(val[idx.index(max(idx))])
         sumit+= (val[idx.index(min(idx))]*10 + val2[idx2.index(max(idx2))])
 print(sumit)
 
