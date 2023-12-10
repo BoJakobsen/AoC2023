@@ -59,3 +59,4 @@ for kk in range(int(len(seeds)/2)) :
 
 print(minloc)
 
+# did finish, but surly not the "correct solution", as it took very long to calculate : my number was: 10834440
