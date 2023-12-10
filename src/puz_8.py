@@ -48,7 +48,7 @@ def part2():
             node=map[labs[k]]
             labs[k]=node[inst[kk]]
             if labs[k] not in Zlabs:
-                allfinished=False
+                allfinished=False                            
         kk+=1
         if kk == len(inst):
             kk=0
@@ -57,7 +57,3 @@ def part2():
     print(steps)
 
 part2()
-
-
-
-
