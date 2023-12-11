@@ -1,3 +1,5 @@
+import math
+
 #with open('testdata/8_2_testdata.dat') as f:
 with open('data/8_data.dat') as f:
     lines=[x.strip() for x in f]
@@ -56,4 +58,41 @@ def part2():
     print(labs)
     print(steps)
 
-part2()
+#part2() will properly never end. 
+
+
+# better solution, but not totally general, depends on
+#structor of problem (map)
+def part2v2():
+    labs=[] # new start labs
+    Zlabs=[]
+    for lab in map.keys() :
+        if lab[2]=='A':
+            labs.append(lab)
+        elif lab[2]=='Z':
+            Zlabs.append(lab)
+    # a bit of anaysis shows that Z i hit peridocally with same number of steps from 
+    # start 
+
+    Periode=[]
+    for k in range(len(labs)):
+        kk=0
+        steps=0
+        lab=labs[k]
+        while not lab in Zlabs:
+            node=map[lab]
+            lab=node[inst[kk]]
+            kk+=1
+            if kk == len(inst):
+                kk=0
+            steps += 1
+        Periode.append(steps)
+    # calculate  least common multiple (LCM) 
+    res=math.lcm(*Periode)
+    print(int(res))
+    return(res)
+    
+
+part2v2()        
+            
+
