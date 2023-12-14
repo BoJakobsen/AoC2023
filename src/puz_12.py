@@ -1,7 +1,7 @@
 import itertools as it
 #
 #with open('../testdata/12_1_testdata.dat') as f:
-with open('../data/12_data.dat') as f:
+with open('data/12_data.dat') as f:
     lines=[x.strip() for x in f]
 
 
@@ -40,13 +40,18 @@ def checkit(rec,contgrp,fill):
         res=False
     return res
 
+def countit():
+    total=0
+    for kk in range(len(records)):
+        print(kk)
+        cnt=0
+        Nmissing=records[kk].count('?')
+        fills=it.product('.#',repeat=Nmissing)
+        for fill in fills: 
+            if checkit(records[kk],contgrp[kk],fill):            
+                cnt+=1
+        total += cnt
+    print(total)
 
-cnt=0
-for kk in range(len(records)):
-    Nmissing=records[kk].count('?')
-    fills=it.product('.#',repeat=Nmissing)
-    for fill in fills: 
-        if checkit(records[kk],contgrp[kk],fill):            
-            cnt+=1
-print(cnt)
-
+#Problem 1
+countit()
