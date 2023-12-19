@@ -6,7 +6,6 @@ with open('data/16_data.dat') as f:
 
 nplines = np.char.array([list(x) for x in lines])
 nplines_shape=nplines.shape
-countit=np.zeros(nplines_shape)
 
 def dirtovec(dir):
     if dir=='R':
@@ -72,11 +71,49 @@ def proporgate(pos,dir):
                 return 
 
 
-start=np.array([0,0])
-startdir='R'
-blist=set([])
-blist.add((tuple(start) ,startdir))
-countit[*start]=1
-proporgate(start,startdir)
-#print(countit>0)
-print(sum(sum(countit>0)))
+global countit
+global blist
+
+def part1():    
+    global countit
+    global blist
+    countit=np.zeros(nplines_shape)
+    start=np.array([0,0])
+    startdir='R'    
+    blist=set([])
+    blist.add((tuple(start) ,startdir))
+    countit[*start]=1
+    proporgate(start,startdir)
+    print(sum(sum(countit>0)))
+
+part1()
+
+
+
+def traceit(start,startdir):
+    global countit
+    global blist
+    countit=np.zeros(nplines_shape)
+    blist=set([])
+    blist.add((tuple(start) ,startdir))
+    countit[*start]=1
+    proporgate(start,startdir)
+    return (sum(sum(countit>0)))
+
+def part2():
+    counts=[]
+    for k in range(nplines_shape[1]) :
+        x=traceit(np.array([0,k]),'D')
+        counts.append(x)
+    for k in range(nplines_shape[1]) :
+        x=traceit(np.array([nplines_shape[0]-1,k]),'U')
+        counts.append(x)
+    for k in range(nplines_shape[0]) :
+        x=traceit(np.array([k,0]),'R')
+        counts.append(x)
+    for k in range(nplines_shape[0]) :
+        x=traceit(np.array([k,nplines_shape[1]-1]),'L')
+        counts.append(x)
+    print(max(counts))
+
+part2()
