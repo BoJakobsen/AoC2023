@@ -26,22 +26,21 @@ def testbound(newpos):
     else: 
         return False
     
-def proporgate(pos,dir,blist):
-    newblist=blist.copy()
+def proporgate(pos,dir):
     vec=dirtovec(dir)
     newpos=pos+vec
     if testbound(newpos):
-                return newpos
+                return
     while True:
         countit[*newpos]+=1
         while nplines[*newpos] == '.':
             newpos += vec
             if testbound(newpos):
-                return newpos
+                return 
             countit[*newpos]+=1
-        if (tuple(newpos) , dir) in newblist:
-            return newpos
-        newblist.add((tuple(newpos) , dir))
+        if (tuple(newpos) , dir) in blist:
+            return
+        blist.add((tuple(newpos) , dir))
         symb=nplines[*newpos]
         if symb =='\\' and dir=='R':
             dir='D'
@@ -60,24 +59,24 @@ def proporgate(pos,dir,blist):
         elif symb =='/' and dir=='D':
             dir='L'
         elif symb =='|' and (dir=='R' or dir=='L'):
-            proporgate(newpos,'U',newblist)
-            proporgate(newpos,'D',newblist)
-            return newpos
+            proporgate(newpos,'U')
+            proporgate(newpos,'D')
+            return
         elif symb =='-' and (dir=='U' or dir=='D'):
-            proporgate(newpos,'R',newblist)
-            proporgate(newpos,'L',newblist)
-            return newpos                
+            proporgate(newpos,'R')
+            proporgate(newpos,'L')
+            return         
         vec=dirtovec(dir)
         newpos += vec
         if testbound(newpos):
-                return newpos
+                return 
 
 
 start=np.array([0,0])
 startdir='R'
-startblist=set([])
-startblist.add((tuple(start) ,startdir))
+blist=set([])
+blist.add((tuple(start) ,startdir))
 countit[*start]=1
-proporgate(start,startdir,startblist)
+proporgate(start,startdir)
 #print(countit>0)
 print(sum(sum(countit>0)))
