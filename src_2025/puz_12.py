@@ -1,7 +1,7 @@
 import itertools as it
 #
-#with open('../testdata/12_1_testdata.dat') as f:
-with open('../data/12_data.dat') as f:
+with open('../testdata/12_1_testdata.dat') as f:
+#with open('../data/12_data.dat') as f:
     lines=[x.strip() for x in f]
 
 
@@ -73,4 +73,43 @@ def prob1() :
 
     print(res)
 
-prob1()
+# prob1()
+
+
+def prob2_slow():
+    # Way to slow, permutations explodes
+    # Works on the small ones on the tests but no chance on the larger ones. 
+    res = 0
+    for Nres in [1]:  # range(0,len(rec)):
+        rec2 = rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] 
+        cgrp2 = cgrp[Nres]*5
+
+        # Lets find all numbers we can
+        N = len(rec2)  # total springs
+        Ndam = sum(cgrp2)  # total damaged springs
+        Nop = N-Ndam  # Total operational springs
+
+        Nunk = rec2.count('?')  # number of unknown springs
+        Nop_seen = rec2.count('.')  # seen operational springs
+        Ndam_seen = rec2.count('#')  # seen operational springs
+
+        Nop_toplace = Nop - Nop_seen
+        Ndam_toplace = Ndam - Ndam_seen
+
+        IDXunk = [i for i, ltr in enumerate(rec2) if ltr == '?']  # index for unknowns
+
+        # all ways to place the operational springs
+        permut = (it.combinations(range(Nunk),Nop_toplace))
+
+        for jj in permut:
+            Trec = list(rec2)
+            for kk in jj:
+                Trec[IDXunk[kk]] = '.'
+                # all operational is now in, so left over ? is broken springs
+            if checkit(Trec,cgrp2):
+                res += 1
+                print(res)
+    print(res)
+
+
+# prob2_slow()
