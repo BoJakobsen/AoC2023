@@ -1,4 +1,7 @@
 import itertools as it
+from functools import cache
+
+
 #
 #with open('../testdata/12_1_testdata.dat') as f:
 with open('../data/12_data.dat') as f:
@@ -71,7 +74,8 @@ def prob1() :
 
     print(res)
 
-# prob1()
+
+prob1()
 
 
 def prob2_slow():
@@ -111,10 +115,11 @@ def prob2_slow():
 # prob2_slow()
 
 
-def checkit2(rec, cgrp,ingrp):
+# partly recursive solution
+def checkit2(rec, cgrp, ingrp):
     global count, callcnt
     #  print(rec, cgrp, ingrp)
-    for idx, ch  in enumerate(rec):
+    for idx, ch in enumerate(rec):
         #  print(ch, ingrp,cgrp)
         if ch == '?':
             rec[idx] = '#'
@@ -129,7 +134,7 @@ def checkit2(rec, cgrp,ingrp):
             else:
                 return False
         elif (ch == '#') and ingrp:
-            if len(cgrp)>0 and cgrp[0] >= 1:
+            if len(cgrp) > 0 and cgrp[0] >= 1:
                 cgrp[0] -=1
             else:
                 return False
@@ -141,21 +146,87 @@ def checkit2(rec, cgrp,ingrp):
                 return False
     if len(cgrp) == 0 or (len(cgrp) == 1 and cgrp[0] == 0):
         count = count + 1
-    #      print('OK')
+        print('OK')
         return True
     else:
         return False
 
 
+# This works, but is still to slow
 count = 0
+
+
 def prob2_recursive_slow():
     global count
-    for Nres in range(0,len(rec)):
+    for Nres in range(0, len(rec)):
         print(Nres)
         rec2 = rec[Nres] #+ '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] 
         cgrp2 = cgrp[Nres]#*5
         checkit2(list(rec2), cgrp2, False)
     print(count)
 
-prob2_recursive_slow()
-    
+
+#prob2_recursive_slow()
+
+
+# optimized for use of cache, all input needs to be immutable, and no global variables
+# Not the prettiest code, states could be more clearly defined.
+@cache
+def checkit3(rec, rec_index0, cgrp, cgrp_index0, cur_cgrp0):
+    count = 0
+    ch0 = rec[rec_index0]
+    ch = ''
+    finished = False
+    while not finished:
+        rec_index = rec_index0
+        cgrp_index = cgrp_index0
+        cur_cgrp = cur_cgrp0
+        if ch0 != '?':
+            ch = ch0
+            finished = True
+        else:
+            if ch == '':
+                ch = '#'
+            else:
+                ch = '.'
+                finished = True
+        if (ch == '#') and cur_cgrp == 0:  # start of new group 
+            if (cgrp_index < len(cgrp)) and cgrp[cgrp_index] > 0:
+                cur_cgrp = 1
+            else:
+                continue
+        elif (ch == '#') and cur_cgrp > 0:  # in a group
+            if cgrp[cgrp_index] > cur_cgrp:
+                cur_cgrp += 1
+            else:
+                continue
+        elif ch == '.' and cur_cgrp > 0:  # leaving a group
+            if (cur_cgrp == cgrp[cgrp_index]):
+                cgrp_index += 1
+                cur_cgrp = 0
+            else:
+                continue
+        if (rec_index == len(rec)-1):  # we are at the end
+            if cur_cgrp == 0:  # we are not in a groupe
+                if cgrp_index != len(cgrp):   # we have index past last element
+                    continue
+            else:  # we are in a group
+                if (cgrp[cgrp_index] != cur_cgrp) or (cgrp_index != len(cgrp)-1):
+                    continue
+            count += 1
+        else:
+            rec_index += 1
+            count += checkit3(rec, rec_index, cgrp, cgrp_index, cur_cgrp)
+    return count
+
+
+def prob2_recursive_optimized():
+    tot = 0
+    for Nres in range(0, len(rec)):
+        rec2 = rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] 
+        cgrp2 = cgrp[Nres]*5
+        tot += checkit3(rec2, 0, tuple(cgrp2), 0, 0)
+    print(tot)
+
+
+prob2_recursive_optimized()
