@@ -1,7 +1,7 @@
 import itertools as it
 #
-with open('../testdata/12_1_testdata.dat') as f:
-#with open('../data/12_data.dat') as f:
+#with open('../testdata/12_1_testdata.dat') as f:
+with open('../data/12_data.dat') as f:
     lines=[x.strip() for x in f]
 
 
@@ -37,12 +37,10 @@ def checkit(rec,cgrp):
     return res
 
 
-
-# Optimized a bit compared to old solution
-#might still be to slow
+#  Optimized a bit compared to old solution
+#  still be to slow
 
 def prob1() :
-
     res = 0
     for Nres in range(0,len(rec)):
 
@@ -110,6 +108,54 @@ def prob2_slow():
                 res += 1
                 print(res)
     print(res)
-
-
 # prob2_slow()
+
+
+def checkit2(rec, cgrp,ingrp):
+    global count, callcnt
+    #  print(rec, cgrp, ingrp)
+    for idx, ch  in enumerate(rec):
+        #  print(ch, ingrp,cgrp)
+        if ch == '?':
+            rec[idx] = '#'
+            checkit2(rec[idx:].copy(), cgrp.copy(), ingrp)
+            rec[idx] = '.'
+            checkit2(rec[idx:].copy(), cgrp.copy(), ingrp)
+            return True
+        elif (ch == '#') and not ingrp:
+            if len(cgrp) > 0:
+                ingrp = True
+                cgrp[0] -= 1
+            else:
+                return False
+        elif (ch == '#') and ingrp:
+            if len(cgrp)>0 and cgrp[0] >= 1:
+                cgrp[0] -=1
+            else:
+                return False
+        elif ch == '.' and ingrp:
+            if cgrp[0] == 0:
+                cgrp = cgrp[1:]
+                ingrp = False
+            else:
+                return False
+    if len(cgrp) == 0 or (len(cgrp) == 1 and cgrp[0] == 0):
+        count = count + 1
+    #      print('OK')
+        return True
+    else:
+        return False
+
+
+count = 0
+def prob2_recursive_slow():
+    global count
+    for Nres in range(0,len(rec)):
+        print(Nres)
+        rec2 = rec[Nres] #+ '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] + '?' + rec[Nres] 
+        cgrp2 = cgrp[Nres]#*5
+        checkit2(list(rec2), cgrp2, False)
+    print(count)
+
+prob2_recursive_slow()
+    
