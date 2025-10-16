@@ -1,55 +1,55 @@
 import re
 #
 #with open('../testdata/14_testdata.dat') as f:
-with open('data/14_data.dat') as f:
-    lines=[x.strip() for x in f]
+with open('../data/14_data.dat') as f:
+    lines=[list(x.strip()) for x in f]
 
 
 
-#def testup()
+def move_right(lines_f):
+    for k in range(len(lines_f)):
+        line_f_str = "".join(list(lines_f[k]))
+        O_pos = [match.start() for match in re.finditer(r'O', line_f_str)]
+        B_pos = [match.start() for match in re.finditer(r'#', line_f_str)]
+
+        line = list(lines_f[k])
+        B_pos.append(len(line))  # Put a block way to the right fixes edge cases
+        b_index = 0
+        ind_block_index = 0
+        for O in O_pos:
+            if O > B_pos[b_index]:  # We are to the right of current cube
+                while O > B_pos[b_index]:  # find next ok block of free space
+                    b_index += 1
+                ind_block_index = 0  # must be first rolling block
+            if b_index == 0:  # moving to the very right 
+                line[ind_block_index] = 'X'
+            else:
+                line[B_pos[b_index-1]+ind_block_index+1] = 'X'
+            ind_block_index += 1
+        lines_f[k] = line
+
+
+def part1():
+    # flip rows and columns for easy movement
+    lines_f = list(zip(*lines))
+    move_right(lines_f)
+
+    res = 0
+    for line in lines_f:
+        for id, ch in enumerate(line):
+            if ch == 'X':
+                res += len(line) - id
+    print(res)
+
+
+part1()
 
 
 
-Llines=len(lines[0]) #length of a line
-Nlines=len(lines) # numer of lines
+#for line in lines_f:
+#    print(line)
+#print()
 
-
-
-def cnt_behind(lines, Nline, Nch,Ntot):
-    ended= False
-    k=Nline+1
-    cnt=0
-    while not ended:
-        if  k==Nlines or lines[k][Nch] == '#' :
-            ended=True
-        elif lines[k][Nch] == 'O':
-            cnt+=1            
-        k+=1
-    for kk in range(cnt):
-        Ntot[Nline+1+kk]+=1
-    return cnt
-
-# empty dict for counting block per line (all we need)
-Ntot={a:0 for a in range(Nlines) }
-
-#for first line we count all
-for kk in range(Llines):
-    cnt=cnt_behind(lines,-1,kk,Ntot)
-
-#for the rest count all behind # blocks
-for nn in range(Nlines):
-    #find all square blocks
-    a= re.finditer('#',lines[nn])
-    idx= [aa.start() for aa in a ]
-    for kk in idx:
-        cnt=cnt_behind(lines,nn,kk,Ntot)
-
-
-# do the final calculation
-k=Nlines
-tot=0
-for a in Ntot.values():
-    tot+=a*k
-    k-=1
-print(tot)
-
+# for line in lines_f:
+#     print(line)
+# print()
